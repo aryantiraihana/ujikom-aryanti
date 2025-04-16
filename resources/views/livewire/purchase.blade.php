@@ -32,24 +32,42 @@
                         Semua Pembelian
                     </div>
                     <div class="d-flex justify-content-between m-3 flex-wrap gap-2">
-                        {{-- <div class="d-flex align-items-center gap-2">
-                            <label for="perPage">Tampilkan</label>
-                            <select wire:model.live.debounce.250ms="perPage" id="perPage" class="form-select w-auto">
-                                @foreach($perPageOptions as $perPageOption)
-                                    <option value="{{$perPageOption}}">{{$perPageOption}}</option>
+                        <div class="row w-100">
+                            {{-- Filter Harian --}}
+                            <div class="col-12 col-sm-6 col-md-2 mb-3">
+                                <label class="form-label">Filter Harian</label>
+                                <input type="date" wire:model.live="filterByDate" class="form-control">
+                            </div>
 
-                                @endforeach
-                            </select>
-                        </div> --}}
+                            {{-- Filter Mingguan --}}
+                            <div class="col-12 col-sm-6 col-md-2 mb-3">
+                                <label class="form-label">Tanggal Mulai</label>
+                                <input type="date" wire:model.live="startDate" class="form-control">
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-2 mb-3">
+                                <label class="form-label">Tanggal Akhir</label>
+                                <input type="date" wire:model.live="endDate" class="form-control">
+                            </div>
 
-                        <div>
-                            <label class="mb-1" for="filterByDate">Filter Tanggal</label>
-                            <input type="date" wire:model.live="filterByDate" id="filterByDate" class="form-control">
+                            {{-- Filter Bulanan --}}
+                            <div class="col-12 col-sm-6 col-md-2 mb-3">
+                                <label class="form-label">Filter Bulanan</label>
+                                <input type="month" wire:model.live="filterMonth" class="form-control">
+                            </div>
+
+                            {{-- Filter Tahunan --}}
+                            <div class="col-12 col-sm-6 col-md-2 mb-3">
+                                <label class="form-label">Filter Tahunan</label>
+                                <select wire:model.live="filterYear" class="form-control">
+                                    <option value="">-- Pilih Tahun --</option>
+                                    @for ($year = now()->year; $year >= 2020; $year--)
+                                        <option value="{{ $year }}">{{ $year }}</option>
+                                    @endfor
+                                </select>
+                            </div>
                         </div>
 
-                        {{-- <div>
-                            <input type="search" class="form-control" wire:model.live="search" placeholder="Cari...">
-                        </div> --}}
+                        <button class="ml-2 btn btn-info btn-sm text-white" wire:click="cancel">Clear</button>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered table-striped">

@@ -39,6 +39,10 @@ class Purchase extends Component
     public $perPageOptions = [1, 2, 5, 10, 25, 50, 100];
 
     public $filterByDate;
+    public $startDate;
+    public $endDate;
+    public $filterMonth;
+    public $filterYear;
 
     public $isEmployee;
     public function updatingSearch()
@@ -52,11 +56,12 @@ class Purchase extends Component
 
     public function cancel(){
         $this->reset(['menuOptions']);
+        $this->filterByDate = null;
+        $this->startDate = null;
+        $this->endDate = null;
+        $this->filterMonth = null;
+        $this->filterYear = null;
     }
-
-    // public function exportPurchase(){
-    //     return Excel::download(new ExportPurchase, 'laporan-pembelian.xlsx');
-    // }
 
     public function exportPurchase()
     {
@@ -261,22 +266,24 @@ class Purchase extends Component
         $this->products = Product::all();
     }
 
-    protected function getFilteredPurchases()
-    {
-        return ModelsPurchase::with(['user', 'member'])
-            ->when($this->filterByDate, function($query) {
-                $query->whereDate('purchase_date', $this->filterByDate);
-            })
-            // ->when($this->search, function($query) {
-            //     $query->whereHas('member', function ($q) {
-            //         $q->where('name', 'like', '%' . $this->search. '%');
-            //     })
-            //     ->orWhereHas('user', function ($q) {
-            //         $q->where('name', 'like', '%' . $this->search . '%');
-            //     });
-            // })
-            ->latest();
-    }
+protected function getFilteredPurchases()
+{
+    return ModelsPurchase::with(['user', 'member'])
+        ->when($this->filterByDate, function ($query) {
+            $query->whereDate('purchase_date', $this->filterByDate);
+        })
+        ->when($this->startDate && $this->endDate, function ($query) {
+            $query->whereBetween('purchase_date', [$this->startDate, $this->endDate]);
+        })
+        ->when($this->filterMonth, function ($query) {
+            $query->whereMonth('purchase_date', date('m', strtotime($this->filterMonth)))
+                  ->whereYear('purchase_date', date('Y', strtotime($this->filterMonth)));
+        })
+        ->when($this->filterYear, function ($query) {
+            $query->whereYear('purchase_date', $this->filterYear);
+        })
+        ->latest();
+}
 
         public function render()
         {
